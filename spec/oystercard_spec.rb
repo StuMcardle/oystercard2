@@ -40,21 +40,6 @@ describe Oystercard do
     expect(subject.in_journey?).to eq (false)
   end
 
-  it 'logs the entry station' do
-    station = double("station")
-    subject.top_up(Oystercard::MAXIMUM_BALANCE)
-    subject.touch_in(station)
-    expect(subject.entry_station).to eq station
-  end
-
-  it 'forgets entry station on touch out' do
-    station = double("station")
-    subject.top_up(Oystercard::MAXIMUM_BALANCE)
-    subject.touch_in(station)
-    subject.touch_out(station)
-    expect(subject.entry_station).to eq nil
-  end
-
   it 'has an empty list of journeys by default' do
     expect(subject.journeys).to eq([])
   end
@@ -65,6 +50,7 @@ describe Oystercard do
     subject.top_up(Oystercard::MAXIMUM_BALANCE)
     subject.touch_in(station)
     subject.touch_out(station2)
-    expect(subject.journeys).to eq([{entry_station: station, exit_station: station2}])
+    expect(subject.journeys.first.entry_station).to eq(station)
+    expect(subject.journeys.first.exit_station).to eq(station2)
   end
 end
