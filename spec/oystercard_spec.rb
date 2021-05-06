@@ -21,22 +21,37 @@ describe Oystercard do
   end
 
   it 'touches in' do
+    station = double("station")
     subject.top_up(Oystercard::MAXIMUM_BALANCE)
-    subject.touch_in
-    expect(subject.in_journey).to eq (true)
+    subject.touch_in(station)
+    expect(subject.in_journey?).to eq (true)
   end
 
   it 'raises an error when touching in with insufficient balance' do
-    expect{ subject.touch_in }.to raise_error "Insufficent balance"
+    station = double("station")
+    expect{ subject.touch_in(station) }.to raise_error "Insufficent balance"
   end
 
   it 'touches out' do
+    station = double("station")
     subject.top_up(Oystercard::MAXIMUM_BALANCE)
-    subject.touch_in
+    subject.touch_in(station)
     subject.touch_out
-    expect(subject.in_journey).to eq (false)
+    expect(subject.in_journey?).to eq (false)
   end
 
-  
+  it 'logs the entry station' do
+    station = double("station")
+    subject.top_up(Oystercard::MAXIMUM_BALANCE)
+    subject.touch_in(station)
+    expect(subject.entry_station).to eq station
+  end
 
+  it 'forgets entry station on touch out' do
+    station = double("station")
+    subject.top_up(Oystercard::MAXIMUM_BALANCE)
+    subject.touch_in(station)
+    subject.touch_out
+    expect(subject.entry_station).to eq nil
+  end
 end
